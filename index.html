@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Financeiro Prestige de Crédito Habitação</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #00c6ff;
+            --secondary-color: #0072ff;
+            --safe-color: #28a745;
+            --warning-color: #f5a623;
+            --danger-color: #e63946;
+            --bg-color: #0f172a;
+            --card-color: rgba(30, 41, 59, 0.75);
+            --text-color: #f1f5f9;
+            --label-color: #94a3b8;
+            --border-color: #334155;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            width: 100%; max-width: 1100px; margin: 20px auto;
+            border-radius: 24px; padding: 40px;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.8) 100%);
+            padding: 40px; border-radius: 16px; text-align: center;
+            margin-bottom: 40px; border: 1px solid var(--border-color);
+        }
+        h1 {
+            font-size: 2.5em; font-weight: 700;
+            background: -webkit-linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+        .hero-section p { font-size: 1.1em; color: var(--label-color); max-width: 600px; margin: 10px auto 0; }
+        
+        .form-section {
+            background: var(--card-color); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            padding: 30px; border-radius: 16px; border: 1px solid var(--border-color);
+        }
+
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 25px; }
+        .form-group { position: relative; }
+        label { font-weight: 600; margin-bottom: 10px; font-size: 0.9em; color: var(--label-color); display: flex; align-items: center; }
+        input {
+            width: 100%; padding: 14px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 1em;
+            font-family: 'Inter', sans-serif; transition: all 0.3s ease; background: var(--bg-color); color: var(--text-color);
+        }
+        input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(0, 198, 255, 0.3); }
+        .tooltip { position: relative; margin-left: 8px; cursor: help; border: 1px solid; border-radius: 50%; width: 16px; height: 16px; display: inline-flex; justify-content: center; align-items: center; font-size: 11px; }
+        .tooltip .tooltip-text { visibility: hidden; width: 220px; background-color: #333; color: #fff; text-align: center; border-radius: 6px; padding: 8px; position: absolute; z-index: 1; bottom: 125%; left: 50%; margin-left: -110px; opacity: 0; transition: opacity 0.3s; }
+        .tooltip:hover .tooltip-text { visibility: visible; opacity: 1; }
+        
+        .button-container { text-align: center; margin: 40px 0 20px 0; }
+        .calc-button {
+            background-image: linear-gradient(to right, var(--secondary-color) 0%, var(--primary-color) 51%, var(--secondary-color) 100%);
+            background-size: 200% auto; color: white; padding: 16px 45px; border: none; border-radius: 10px;
+            font-size: 1.1em; font-weight: 600; cursor: pointer; transition: 0.5s; box-shadow: 0 5px 20px rgba(0, 150, 255, 0.3);
+        }
+        .calc-button:hover { background-position: right center; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 150, 255, 0.5); }
+
+        .results-area { display: none; flex-direction: column; gap: 40px; margin-top: 40px; animation: fadeIn 0.8s ease-out; }
+        .results-section h2 { font-size: 1.5em; margin: 0 0 20px 0; text-align: center; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
+        .legend { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 20px 0; font-size: 0.9em; }
+        .legend-item { display: flex; align-items: center; }
+        .color-box { width: 15px; height: 15px; border-radius: 4px; margin-right: 8px; }
+        #results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 25px; }
+        .result-card {
+            background: var(--card-color); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; border-left-width: 5px;
+            transition: all 0.3s ease;
+        }
+        .result-card:hover { transform: scale(1.03); box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
+        .result-card.worst-case-highlight { box-shadow: 0 0 20px var(--danger-color); border: 1px solid var(--danger-color); }
+        .card-header, .card-body p{ /* Estilos internos */ }
+
+        #chart-container { background: var(--card-color); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 20px; border-radius: 16px; border: 1px solid var(--border-color); height: 400px; }
+        
+        .disclaimer-section {
+            display: none; margin-top: 40px; padding: 25px; background-color: rgba(30, 41, 59, 0.5); border-left: 5px solid var(--warning-color);
+            border-radius: 16px; text-align: center; color: var(--label-color); font-size: 0.9em;
+        }
+        .disclaimer-section h3 { margin: 0 0 10px 0; color: var(--warning-color); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="hero-section">
+            <h1>Simulador Financeiro de Crédito</h1>
+            <p>Tome decisões informadas. Analise os custos do seu crédito habitação e o impacto de futuras subidas de juros.</p>
+        </div>
+
+        <div class="form-section">
+            <div class="form-grid">
+                 <div class="form-group"><label for="property-value">Valor do Imóvel (€)</label><input type="number" id="property-value" placeholder="250000"></div>
+                 <div class="form-group"><label for="down-payment">Entrada (€)</label><input type="number" id="down-payment" placeholder="50000"></div>
+                 <div class="form-group"><label for="net-income">Rendimento Líquido (€/mês)</label><input type="number" id="net-income" placeholder="2500"></div>
+                 <div class="form-group"><label for="loan-term">Prazo (anos)</label><input type="number" id="loan-term" placeholder="35"></div>
+                 <div class="form-group"><label for="spread">Spread (%)<span class="tooltip">?<span class="tooltip-text">Margem de lucro do banco. Use 0.8 a 1.2 como estimativa.</span></span></label><input type="number" id="spread" step="0.01" placeholder="0.9"></div>
+                 <div class="form-group"><label for="insurance">Seguros (€/mês)<span class="tooltip">?<span class="tooltip-text">Estimativa mensal para seguro de vida e multirriscos.</span></span></label><input type="number" id="insurance" placeholder="60"></div>
+                 <div class="form-group"><label for="other-costs">Outros Custos (€/mês)<span class="tooltip">?<span class="tooltip-text">Estimativa para condomínio, IMI, etc.</span></span></label><input type="number" id="other-costs" placeholder="40"></div>
+            </div>
+            <div class="button-container">
+                <button class="calc-button" onclick="calculateScenarios()">Analisar Cenários</button>
+            </div>
+        </div>
+        
+        <div id="results-area" class="results-area">
+            <div id="monthly-scenarios-section" class="results-section">
+                <h2 id="results-title">Análise de Risco Mensal</h2>
+                <div class="legend">
+                    <span class="legend-item"><span class="color-box" style="background-color: var(--safe-color);"></span> Baixo Risco (&lt;30%)</span>
+                    <span class="legend-item"><span class="color-box" style="background-color: var(--warning-color);"></span> Risco Moderado (30%-40%)</span>
+                    <span class="legend-item"><span class="color-box" style="background-color: var(--danger-color);"></span> Risco Elevado (&gt;40%)</span>
+                </div>
+                <div id="results-grid"></div>
+            </div>
+            <div id="chart-section" class="results-section">
+                <h2>Resumo Visual da Taxa de Esforço</h2>
+                <div id="chart-container"><canvas id="effort-chart"></canvas></div>
+            </div>
+        </div>
+
+        <div id="disclaimer" class="disclaimer-section">
+            <h3>Aviso Importante</h3>
+            <p>Esta ferramenta é um simulador para fins meramente informativos e educacionais. Os resultados apresentados são estimativas e não constituem aconselhamento financeiro, legal, ou uma proposta contratual.</p>
+            <p>Todos os valores, taxas e condições devem ser rigorosamente confirmados junto de uma instituição bancária ou consultor financeiro qualificado antes de tomar qualquer decisão.</p>
+        </div>
+    </div>
+
+    <script>
+        let effortChart;
+
+        function formatCurrency(value) {
+            return value.toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' });
+        }
+
+        function calculateMonthlyPayment(principal, annualRate, years) {
+            const monthlyRate = annualRate / 12 / 100;
+            const numberOfPayments = years * 12;
+            if (monthlyRate === 0) return principal / numberOfPayments;
+            return principal * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+        }
+
+        function getEffortRateInfo(rate) {
+            if (rate < 30) return { class: 'safe', icon: '✔' };
+            if (rate <= 40) return { class: 'warning', icon: '⚠️' };
+            return { class: 'danger', icon: '✖' };
+        }
+
+        function calculateScenarios() {
+            const propertyValue = parseFloat(document.getElementById('property-value').value) || 0;
+            const downPayment = parseFloat(document.getElementById('down-payment').value) || 0;
+            const netIncome = parseFloat(document.getElementById('net-income').value) || 0;
+            const loanTerm = parseInt(document.getElementById('loan-term').value, 10) || 0;
+            const spread = parseFloat(document.getElementById('spread').value) || 0;
+            const insuranceCost = parseFloat(document.getElementById('insurance').value) || 0;
+            const otherCosts = parseFloat(document.getElementById('other-costs').value) || 0;
+            
+            if (propertyValue <= 0 || netIncome <= 0 || loanTerm <= 0 || propertyValue <= downPayment) {
+                alert("Por favor, preencha todos os campos com valores válidos para poder simular.");
+                return;
+            }
+
+            const loanAmount = propertyValue - downPayment;
+            const euriborScenarios = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0];
+            const resultsGrid = document.getElementById('results-grid');
+            resultsGrid.innerHTML = '';
+            
+            let worstCaseEffort = 0;
+            let worstCaseCardId = '';
+            const chartLabels = [];
+            const chartData = [];
+            const chartColors = [];
+
+            euriborScenarios.forEach((euribor, index) => {
+                const totalRate = euribor + spread;
+                const monthlyPayment = calculateMonthlyPayment(loanAmount, totalRate, loanTerm);
+                const totalMonthlyCost = monthlyPayment + insuranceCost + otherCosts;
+                const effortRate = (totalMonthlyCost / netIncome) * 100;
+                const effortInfo = getEffortRateInfo(effortRate);
+                
+                const cardId = `card-${index}`;
+                const card = document.createElement('div');
+                card.className = `result-card ${effortInfo.class}`;
+                card.id = cardId;
+                card.innerHTML = `
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color);">
+                        <div class="rate-info">
+                            <span class="rate" style="font-size: 1.4em; font-weight: 700;">${totalRate.toFixed(2)}%</span>
+                            <span class="rate-breakdown" style="font-size: 0.8em; color: var(--label-color);">(Euribor ${euribor.toFixed(1)}% + ${spread.toFixed(2)}%)</span>
+                        </div>
+                        <span class="icon" style="font-size: 1.5em; margin-left: 10px;">${effortInfo.icon}</span>
+                    </div>
+                    <div class="card-body">
+                        <p style="justify-content: space-between; display: flex;">Prestação Crédito: <span style="font-weight: 600;">${formatCurrency(monthlyPayment)}</span></p>
+                        <p style="justify-content: space-between; display: flex;"><strong>Custo Mensal Total:</strong> <strong style="font-weight: 700;">${formatCurrency(totalMonthlyCost)}</strong></p>
+                        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 10px 0;">
+                        <p style="justify-content: space-between; display: flex;">Taxa de Esforço: <span class="effort-rate-value" style="font-weight: 700 !important; color: var(--${effortInfo.class}-color);">${effortRate.toFixed(2).replace('.', ',')}%</span></p>
+                    </div>
+                `;
+                resultsGrid.appendChild(card);
+                
+                if (effortRate > worstCaseEffort) {
+                    worstCaseEffort = effortRate;
+                    worstCaseCardId = cardId;
+                }
+
+                chartLabels.push(`${totalRate.toFixed(2)}%`);
+                chartData.push(effortRate.toFixed(2));
+                chartColors.push(effortRate < 30 ? '#28a745' : effortRate <= 40 ? '#f5a623' : '#e63946');
+            });
+            
+            document.querySelectorAll('.result-card').forEach(c => c.classList.remove('worst-case-highlight'));
+            if(worstCaseCardId) {
+                const worstCard = document.getElementById(worstCaseCardId);
+                if(worstCard) worstCard.classList.add('worst-case-highlight');
+            }
+
+            updateChart(chartLabels, chartData, chartColors);
+
+            document.getElementById('results-title').textContent = `Análise para um empréstimo de ${formatCurrency(loanAmount)}`;
+            document.getElementById('results-area').style.display = 'flex';
+            document.getElementById('disclaimer').style.display = 'block';
+        }
+        
+        function updateChart(labels, data, colors) {
+            const ctx = document.getElementById('effort-chart').getContext('2d');
+            const gridColor = 'rgba(255, 255, 255, 0.1)';
+            const labelColor = '#f1f5f9';
+
+            if(effortChart) effortChart.destroy();
+            effortChart = new Chart(ctx, {
+                type: 'bar',
+                data: { labels: labels, datasets: [{ label: 'Taxa de Esforço (%)', data: data, backgroundColor: colors, borderRadius: 5 }] },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { displayColors: false, bodyFont: { size: 14 } } },
+                    scales: {
+                        y: { ticks: { color: labelColor, font: { size: 12 } }, grid: { color: gridColor } },
+                        x: { ticks: { color: labelColor, font: { size: 12 } }, grid: { display: false } }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
