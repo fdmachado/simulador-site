@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador Financeiro Prestige de Crédito Habitação</title>
+    <title>Simulador Financeiro Prestige de Crédito Habitação e Impostos</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -22,9 +22,7 @@
             --border-color: #334155;
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
-
         *, *::before, *::after { box-sizing: border-box; }
-
         body {
             font-family: 'Inter', sans-serif;
             background: var(--bg-color);
@@ -34,12 +32,10 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
-
         .container {
             width: 100%; max-width: 1100px; margin: 20px auto;
             border-radius: 24px; padding: 40px;
         }
-
         .hero-section {
             background: linear-gradient(135deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.8) 100%);
             padding: 40px; border-radius: 16px; text-align: center;
@@ -57,15 +53,22 @@
             background: var(--card-color); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             padding: 30px; border-radius: 16px; border: 1px solid var(--border-color);
         }
-
+        .form-section h3 {
+            font-size: 1.2em;
+            margin-top: 0;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-color);
+        }
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 25px; }
         .form-group { position: relative; }
         label { font-weight: 600; margin-bottom: 10px; font-size: 0.9em; color: var(--label-color); display: flex; align-items: center; }
-        input {
+        input, select {
             width: 100%; padding: 14px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 1em;
             font-family: 'Inter', sans-serif; transition: all 0.3s ease; background: var(--bg-color); color: var(--text-color);
         }
-        input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(0, 198, 255, 0.3); }
+        input:focus, select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(0, 198, 255, 0.3); }
         .tooltip { position: relative; margin-left: 8px; cursor: help; border: 1px solid; border-radius: 50%; width: 16px; height: 16px; display: inline-flex; justify-content: center; align-items: center; font-size: 11px; }
         .tooltip .tooltip-text { visibility: hidden; width: 220px; background-color: #333; color: #fff; text-align: center; border-radius: 6px; padding: 8px; position: absolute; z-index: 1; bottom: 125%; left: 50%; margin-left: -110px; opacity: 0; transition: opacity 0.3s; }
         .tooltip:hover .tooltip-text { visibility: visible; opacity: 1; }
@@ -77,12 +80,43 @@
             font-size: 1.1em; font-weight: 600; cursor: pointer; transition: 0.5s; box-shadow: 0 5px 20px rgba(0, 150, 255, 0.3);
         }
         .calc-button:hover { background-position: right center; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 150, 255, 0.5); }
-
         .results-area { display: none; flex-direction: column; gap: 40px; margin-top: 40px; animation: fadeIn 0.8s ease-out; }
-        .results-section h2 { font-size: 1.5em; margin: 0 0 20px 0; text-align: center; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
+        .results-section h2 { font-size: 1.5em; margin: 0 0 10px 0; text-align: center; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
+        
+        /* Estilo para a nota da fonte de cálculo */
+        .source-note {
+            text-align: center;
+            font-size: 0.8em;
+            color: var(--label-color);
+            margin: -5px 0 20px 0;
+        }
+
         .legend { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 20px 0; font-size: 0.9em; }
         .legend-item { display: flex; align-items: center; }
         .color-box { width: 15px; height: 15px; border-radius: 4px; margin-right: 8px; }
+
+        .initial-costs-grid {
+             display: grid;
+             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+             gap: 20px;
+             text-align: center;
+        }
+        .cost-card {
+            background: var(--card-color);
+            padding: 20px;
+            border-radius: 12px;
+        }
+        .cost-card .cost-title {
+            font-size: 1em;
+            color: var(--label-color);
+            margin-bottom: 10px;
+        }
+        .cost-card .cost-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
         #results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 25px; }
         .result-card {
             background: var(--card-color); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -91,8 +125,7 @@
         }
         .result-card:hover { transform: scale(1.03); box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
         .result-card.worst-case-highlight { box-shadow: 0 0 20px var(--danger-color); border: 1px solid var(--danger-color); }
-        .card-header, .card-body p{ /* Estilos internos */ }
-
+        
         #chart-container { background: var(--card-color); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 20px; border-radius: 16px; border: 1px solid var(--border-color); height: 400px; }
         
         .disclaimer-section {
@@ -100,19 +133,17 @@
             border-radius: 16px; text-align: center; color: var(--label-color); font-size: 0.9em;
         }
         .disclaimer-section h3 { margin: 0 0 10px 0; color: var(--warning-color); }
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
-
     <div class="container">
         <div class="hero-section">
-            <h1>Simulador Financeiro de Crédito</h1>
-            <p>Tome decisões informadas. Analise os custos do seu crédito habitação e o impacto de futuras subidas de juros.</p>
+            <h1>Simulador Financeiro de Crédito e Impostos</h1>
+            <p>Tome decisões informadas. Analise os custos iniciais e o impacto de futuras subidas de juros no seu crédito.</p>
         </div>
-
         <div class="form-section">
+             <h3>Dados do Crédito e Rendimento</h3>
             <div class="form-grid">
                  <div class="form-group"><label for="property-value">Valor do Imóvel (€)</label><input type="number" id="property-value" placeholder="250000"></div>
                  <div class="form-group"><label for="down-payment">Entrada (€)</label><input type="number" id="down-payment" placeholder="50000"></div>
@@ -122,12 +153,66 @@
                  <div class="form-group"><label for="insurance">Seguros (€/mês)<span class="tooltip">?<span class="tooltip-text">Estimativa mensal para seguro de vida e multirriscos.</span></span></label><input type="number" id="insurance" placeholder="60"></div>
                  <div class="form-group"><label for="other-costs">Outros Custos (€/mês)<span class="tooltip">?<span class="tooltip-text">Estimativa para condomínio, IMI, etc.</span></span></label><input type="number" id="other-costs" placeholder="40"></div>
             </div>
+            <h3 style="margin-top: 30px;">Dados para Cálculo de Impostos</h3>
+             <div class="form-grid">
+                <div class="form-group">
+                    <label for="property-location">Local do Imóvel</label>
+                    <select id="property-location">
+                        <option value="continente">Portugal Continental</option>
+                        <option value="autonomas">Regiões Autónomas</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="property-purpose">Finalidade</label>
+                    <select id="property-purpose">
+                        <option value="hpp">Habitação Própria Permanente</option>
+                        <option value="hps">Habitação Secundária ou Arrendamento</option>
+                        <option value="rustico">Prédio Rústico</option>
+                        <option value="outro">Outras Aquisições Onerosas</option>
+                    </select>
+                </div>
+                 <div class="form-group">
+                    <label for="num-buyers">Nº de Compradores</label>
+                    <select id="num-buyers" onchange="document.getElementById('buyer2-age-group').style.display = this.value === '2' ? 'block' : 'none';">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="buyer1-age">Idade 1º Comprador</label>
+                    <input type="number" id="buyer1-age" placeholder="30">
+                </div>
+                <div class="form-group" id="buyer2-age-group" style="display: none;">
+                    <label for="buyer2-age">Idade 2º Comprador</label>
+                    <input type="number" id="buyer2-age" placeholder="30">
+                </div>
+            </div>
             <div class="button-container">
-                <button class="calc-button" onclick="calculateScenarios()">Analisar Cenários</button>
+                <button class="calc-button" onclick="masterCalculate()">Analisar Cenários</button>
             </div>
         </div>
         
         <div id="results-area" class="results-area">
+            <div id="initial-costs-section" class="results-section">
+                <h2>Custos Iniciais com Impostos</h2>
+                <!-- Linha Adicionada para a fonte do cálculo -->
+                <p class="source-note">*Cálculos baseados nas tabelas de IMT e taxas de IS do Orçamento do Estado. Valores meramente informativos.</p>
+                <div class="initial-costs-grid">
+                    <div class="cost-card">
+                        <div class="cost-title">IMT (Imposto Municipal sobre Transmissões)</div>
+                        <div class="cost-value" id="imt-result">€ 0,00</div>
+                    </div>
+                    <div class="cost-card">
+                        <div class="cost-title">IS (Imposto de Selo sobre Aquisição)</div>
+                        <div class="cost-value" id="is-result">€ 0,00</div>
+                    </div>
+                    <div class="cost-card">
+                        <div class="cost-title">Total Impostos + Entrada</div>
+                        <div class="cost-value" id="total-initial-cost">€ 0,00</div>
+                    </div>
+                </div>
+            </div>
+
             <div id="monthly-scenarios-section" class="results-section">
                 <h2 id="results-title">Análise de Risco Mensal</h2>
                 <div class="legend">
@@ -142,14 +227,12 @@
                 <div id="chart-container"><canvas id="effort-chart"></canvas></div>
             </div>
         </div>
-
         <div id="disclaimer" class="disclaimer-section">
             <h3>Aviso Importante</h3>
             <p>Esta ferramenta é um simulador para fins meramente informativos e educacionais. Os resultados apresentados são estimativas e não constituem aconselhamento financeiro, legal, ou uma proposta contratual.</p>
             <p>Todos os valores, taxas e condições devem ser rigorosamente confirmados junto de uma instituição bancária ou consultor financeiro qualificado antes de tomar qualquer decisão.</p>
         </div>
     </div>
-
     <script>
         let effortChart;
 
@@ -165,9 +248,109 @@
         }
 
         function getEffortRateInfo(rate) {
-            if (rate < 30) return { class: 'safe', icon: '✔' };
-            if (rate <= 40) return { class: 'warning', icon: '⚠️' };
-            return { class: 'danger', icon: '✖' };
+            if (rate < 30) return { class: 'safe', icon: '✔', color: '#28a745' };
+            if (rate <= 40) return { class: 'warning', icon: '⚠️', color: '#f5a623' };
+            return { class: 'danger', icon: '✖', color: '#e63946' };
+        }
+
+        function getImtRates(purpose, location) {
+            // Tabelas IMT (baseadas no OE, mas devem ser confirmadas anualmente)
+            const rates = {
+                continente: {
+                    hpp: [
+                        { upTo: 101917, rate: 0, deduction: 0 },
+                        { upTo: 139412, rate: 0.02, deduction: 2038.34 },
+                        { upTo: 190794, rate: 0.05, deduction: 6220.7 },
+                        { upTo: 316772, rate: 0.07, deduction: 10036.58 },
+                        { upTo: 633453, rate: 0.08, deduction: 13204.3 },
+                        { upTo: 1102929, rate: 0.06, deduction: 0 },
+                        { upTo: Infinity, rate: 0.075, deduction: 0 }
+                    ],
+                    hps: [
+                        { upTo: 101917, rate: 0.01, deduction: 0 },
+                        { upTo: 139412, rate: 0.02, deduction: 1019.17 },
+                        { upTo: 190794, rate: 0.05, deduction: 5201.53 },
+                        { upTo: 316772, rate: 0.07, deduction: 9017.41 },
+                        { upTo: 607528, rate: 0.08, deduction: 12185.13 },
+                        { upTo: 1102929, rate: 0.06, deduction: 0 },
+                        { upTo: Infinity, rate: 0.075, deduction: 0 }
+                    ]
+                },
+                autonomas: {
+                    hpp: [
+                        { upTo: 127396, rate: 0, deduction: 0 },
+                        { upTo: 174265, rate: 0.02, deduction: 2547.92 },
+                        { upTo: 238492, rate: 0.05, deduction: 7775.87 },
+                        { upTo: 395965, rate: 0.07, deduction: 12545.71 },
+                        { upTo: 791816, rate: 0.08, deduction: 16505.36 },
+                        { upTo: 1378661, rate: 0.06, deduction: 0 },
+                        { upTo: Infinity, rate: 0.075, deduction: 0 }
+                    ],
+                    hps: [
+                        { upTo: 127396, rate: 0.01, deduction: 0 },
+                        { upTo: 174265, rate: 0.02, deduction: 1273.96 },
+                        { upTo: 238492, rate: 0.05, deduction: 6501.91 },
+                        { upTo: 395965, rate: 0.07, deduction: 11271.74 },
+                        { upTo: 759410, rate: 0.08, deduction: 15231.39 },
+                        { upTo: 1378661, rate: 0.06, deduction: 0 },
+                        { upTo: Infinity, rate: 0.075, deduction: 0 }
+                    ]
+                }
+            };
+             if (purpose === 'rustico') return 'rustico';
+             if (purpose === 'outro') return 'outro';
+             return rates[location][purpose];
+        }
+
+        function calculateImt(value, purpose, location) {
+            const rates = getImtRates(purpose, location);
+
+            if (rates === 'rustico') return value * 0.05;
+            if (rates === 'outro') return value * 0.065;
+
+            const highValueBrackets = {
+                'continente_hpp': { limit: 1102929, rate: 0.075, specialLimit: 633453, specialRate: 0.06 },
+                'continente_hps': { limit: 1102929, rate: 0.075, specialLimit: 607528, specialRate: 0.06 },
+                'autonomas_hpp': { limit: 1378661, rate: 0.075, specialLimit: 791816, specialRate: 0.06 },
+                'autonomas_hps': { limit: 1378661, rate: 0.075, specialLimit: 759410, specialRate: 0.06 }
+            };
+            const key = `${location}_${purpose}`;
+            if (highValueBrackets[key]) {
+                const config = highValueBrackets[key];
+                if (value > config.limit) return value * config.rate;
+                if (value > config.specialLimit) return value * config.specialRate;
+            }
+
+            for (const bracket of rates) {
+                if (value <= bracket.upTo) {
+                    return Math.max(0, value * bracket.rate - bracket.deduction);
+                }
+            }
+            return 0;
+        }
+
+        function calculateTaxes() {
+            const propertyValue = parseFloat(document.getElementById('property-value').value) || 0;
+            const downPayment = parseFloat(document.getElementById('down-payment').value) || 0;
+            const purpose = document.getElementById('property-purpose').value;
+            const location = document.getElementById('property-location').value;
+
+            if (propertyValue <= 0) return { imt: 0, is: 0, total: downPayment };
+
+            const imt = calculateImt(propertyValue, purpose, location);
+            const is = propertyValue * 0.008;
+            const totalInitialCost = imt + is + downPayment;
+
+            return { imt, is, total: totalInitialCost };
+        }
+
+        function masterCalculate() {
+            const taxes = calculateTaxes();
+            document.getElementById('imt-result').textContent = formatCurrency(taxes.imt);
+            document.getElementById('is-result').textContent = formatCurrency(taxes.is);
+            document.getElementById('total-initial-cost').textContent = formatCurrency(taxes.total);
+
+            calculateScenarios();
         }
 
         function calculateScenarios() {
@@ -181,9 +364,10 @@
             
             if (propertyValue <= 0 || netIncome <= 0 || loanTerm <= 0 || propertyValue <= downPayment) {
                 alert("Por favor, preencha todos os campos com valores válidos para poder simular.");
+                document.getElementById('results-area').style.display = 'none';
+                document.getElementById('disclaimer').style.display = 'none';
                 return;
             }
-
             const loanAmount = propertyValue - downPayment;
             const euriborScenarios = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0];
             const resultsGrid = document.getElementById('results-grid');
@@ -204,8 +388,10 @@
                 
                 const cardId = `card-${index}`;
                 const card = document.createElement('div');
-                card.className = `result-card ${effortInfo.class}`;
+                card.className = `result-card`;
                 card.id = cardId;
+                card.style.borderLeftColor = effortInfo.color;
+
                 card.innerHTML = `
                     <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color);">
                         <div class="rate-info">
@@ -218,7 +404,7 @@
                         <p style="justify-content: space-between; display: flex;">Prestação Crédito: <span style="font-weight: 600;">${formatCurrency(monthlyPayment)}</span></p>
                         <p style="justify-content: space-between; display: flex;"><strong>Custo Mensal Total:</strong> <strong style="font-weight: 700;">${formatCurrency(totalMonthlyCost)}</strong></p>
                         <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 10px 0;">
-                        <p style="justify-content: space-between; display: flex;">Taxa de Esforço: <span class="effort-rate-value" style="font-weight: 700 !important; color: var(--${effortInfo.class}-color);">${effortRate.toFixed(2).replace('.', ',')}%</span></p>
+                        <p style="justify-content: space-between; display: flex;">Taxa de Esforço: <span class="effort-rate-value" style="font-weight: 700 !important; color: ${effortInfo.color};">${effortRate.toFixed(2).replace('.', ',')}%</span></p>
                     </div>
                 `;
                 resultsGrid.appendChild(card);
@@ -227,10 +413,9 @@
                     worstCaseEffort = effortRate;
                     worstCaseCardId = cardId;
                 }
-
                 chartLabels.push(`${totalRate.toFixed(2)}%`);
                 chartData.push(effortRate.toFixed(2));
-                chartColors.push(effortRate < 30 ? '#28a745' : effortRate <= 40 ? '#f5a623' : '#e63946');
+                chartColors.push(effortInfo.color);
             });
             
             document.querySelectorAll('.result-card').forEach(c => c.classList.remove('worst-case-highlight'));
@@ -238,9 +423,7 @@
                 const worstCard = document.getElementById(worstCaseCardId);
                 if(worstCard) worstCard.classList.add('worst-case-highlight');
             }
-
             updateChart(chartLabels, chartData, chartColors);
-
             document.getElementById('results-title').textContent = `Análise para um empréstimo de ${formatCurrency(loanAmount)}`;
             document.getElementById('results-area').style.display = 'flex';
             document.getElementById('disclaimer').style.display = 'block';
@@ -250,7 +433,6 @@
             const ctx = document.getElementById('effort-chart').getContext('2d');
             const gridColor = 'rgba(255, 255, 255, 0.1)';
             const labelColor = '#f1f5f9';
-
             if(effortChart) effortChart.destroy();
             effortChart = new Chart(ctx, {
                 type: 'bar',
