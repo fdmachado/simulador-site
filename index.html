@@ -210,6 +210,17 @@
                     <small class="error-message" id="phone-error"></small>
                 </div>
             </div>
+            <div class="form-group" style="margin-top: 20px;">
+                <label style="display: flex; align-items: flex-start; gap: 10px; font-weight: 400;">
+                    <input type="checkbox" id="rgpd-consent" style="width: 18px; height: 18px; margin-top: 3px;">
+                    <span style="font-size: 0.9em; color: var(--label-color);">
+                        Autorizo a recolha e tratamento dos meus dados para efeitos de contacto 
+                        relacionado com a simulação efetuada. 
+                        Li e concordo com a <a href="#" target="_blank" style="color: var(--primary-color);">Política de Privacidade</a>.
+                    </span>
+                </label>
+                <small class="error-message" id="rgpd-error"></small>
+            </div>
             <div class="button-container">
                 <button class="calc-button" onclick="masterCalculate()">Analisar Cenários</button>
             </div>
@@ -291,6 +302,16 @@
             if (!phone || !phoneRegex.test(phone)) {
                 phoneError.textContent = "Insira um telefone válido (9 dígitos).";
                 phoneInput.classList.add("invalid");
+                isValid = false;
+            }
+            
+            const consentCheckbox = document.getElementById("rgpd-consent");
+            const rgpdError = document.getElementById("rgpd-error");
+            
+            rgpdError.textContent = "";
+            
+            if (!consentCheckbox.checked) {
+                rgpdError.textContent = "Deve aceitar a Política de Privacidade para continuar.";
                 isValid = false;
             }
         
@@ -515,5 +536,6 @@
 </body>
 
 </html>
+
 
 
