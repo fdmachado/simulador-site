@@ -467,6 +467,7 @@
             
             let worstCaseEffort = 0;
             let worstCaseCardId = '';
+            const effortRates = [];
             const chartLabels = [];
             const chartData = [];
             const chartColors = [];
@@ -477,6 +478,8 @@
                 const totalMonthlyCost = monthlyPayment + insuranceCost + otherCosts;
                 const effortRate = (totalMonthlyCost / netIncome) * 100;
                 const effortInfo = getEffortRateInfo(effortRate);
+                
+                effortRates.push(effortRate);
                 
                 const cardId = `card-${index}`;
                 const card = document.createElement('div');
@@ -519,7 +522,7 @@
             document.getElementById('results-title').textContent = `Análise para um empréstimo de ${formatCurrency(loanAmount)}`;
             document.getElementById('results-area').style.display = 'flex';
             document.getElementById('disclaimer').style.display = 'block';
-            return worstCaseEffort.toFixed(2);
+            return effortRates[3].toFixed(2);
         }
         
         function updateChart(labels, data, colors) {
