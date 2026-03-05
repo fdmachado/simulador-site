@@ -432,10 +432,18 @@
 
             const email = document.getElementById("user-email").value;
             const phone = document.getElementById("user-phone").value;
-
             const propertyValue = document.getElementById("property-value").value;
             const downPayment = document.getElementById("down-payment").value;
             const netIncome = document.getElementById("net-income").value;
+            const loanTerm = document.getElementById("loan-term").value;
+            const spread = document.getElementById("spread").value;
+            const insurance = document.getElementById("insurance").value;
+            const otherCosts = document.getElementById("other-costs").value;
+            const propertyLocation = document.getElementById("property-location").value;
+            const propertyPurpose = document.getElementById("property-purpose").value;
+            const numBuyers = document.getElementById("num-buyers").value;
+            const buyer1Age = document.getElementById("buyer1-age").value;
+            const buyer2Age = document.getElementById("buyer2-age").value;
 
             const taxes = calculateTaxes();
             document.getElementById('imt-result').textContent = formatCurrency(taxes.imt);
@@ -443,7 +451,7 @@
             document.getElementById('total-initial-cost').textContent = formatCurrency(taxes.total);
 
             const effortRate = calculateScenarios();
-            saveLead(email, phone, propertyValue, downPayment, netIncome, effortRate);
+            saveLead(email, phone, propertyValue, downPayment, netIncome, loanTerm, spread, insurance, otherCosts, propertyLocation, propertyPurpose, numBuyers, buyer1Age, buyer2Age, effortRate);
         }
 
         function calculateScenarios() {
@@ -545,7 +553,7 @@
             });
         }
 
-        function saveLead(email, phone, propertyValue, downPayment, netIncome, effortRate) {
+        function saveLead(email, phone, propertyValue, downPayment, netIncome, loanTerm, spread, insurance, otherCosts, propertyLocation, propertyPurpose, numBuyers, buyer1Age, buyer2Age, effortRate) {
             
             fetch("https://script.google.com/macros/s/AKfycbxRjSP0d3zbwrV7nvR0DOaoI5q7tQ9QsfRsscNshcI_t-R78FDLBtA6VLROd7zQYD0A2g/exec", {
             
@@ -557,6 +565,15 @@
             property_value: parseFloat(propertyValue) || 0,
             down_payment: parseFloat(downPayment) || 0,
             net_income: parseFloat(netIncome) || 0,
+            loan_term: parseInt(loanTerm) || 0,
+            spread: parseFloat(spread) || 0,
+            insurance: parseFloat(insurance) || 0,
+            other_costs: parseFloat(otherCosts) || 0,
+            property_location: propertyLocation,
+            property_purpose: propertyPurpose,
+            num_buyers: numBuyers,
+            buyer1_age: parseInt(buyer1Age) || 0,
+            buyer2_age: parseInt(buyer2Age) || 0,
             effort_rate: effortRate
             })
 
