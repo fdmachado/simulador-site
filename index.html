@@ -552,8 +552,8 @@
             body: JSON.stringify({
             email: email,
             phone: phone,
-            property_value: propertyValue,
-            down_payment: downPayment,
+            property_value: parseFloat(propertyValue) || 0,
+            down_payment: parseFloat(downPayment) || 0,
             effort_rate: effortRate
             })
 
