@@ -436,16 +436,13 @@
             const propertyValue = document.getElementById("property-value").value;
             const downPayment = document.getElementById("down-payment").value;
 
-            const effortRate = worstCaseEffort.toFixed(2);
-
-            saveLead(email, phone, propertyValue, downPayment, effortRate);
-            
             const taxes = calculateTaxes();
             document.getElementById('imt-result').textContent = formatCurrency(taxes.imt);
             document.getElementById('is-result').textContent = formatCurrency(taxes.is);
             document.getElementById('total-initial-cost').textContent = formatCurrency(taxes.total);
 
-            calculateScenarios();
+            const effortRate = calculateScenarios();
+            saveLead(email, phone, propertyValue, downPayment, effortRate);
         }
 
         function calculateScenarios() {
@@ -522,6 +519,7 @@
             document.getElementById('results-title').textContent = `Análise para um empréstimo de ${formatCurrency(loanAmount)}`;
             document.getElementById('results-area').style.display = 'flex';
             document.getElementById('disclaimer').style.display = 'block';
+            return worstCaseEffort.toFixed(2);
         }
         
         function updateChart(labels, data, colors) {
