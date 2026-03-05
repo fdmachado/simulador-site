@@ -433,7 +433,12 @@
             const email = document.getElementById("user-email").value;
             const phone = document.getElementById("user-phone").value;
 
-            saveLead(email, phone);
+            const propertyValue = document.getElementById("property-value").value;
+            const downPayment = document.getElementById("down-payment").value;
+
+            const effortRate = worstCaseEffort.toFixed(2);
+
+            saveLead(email, phone, propertyValue, downPayment, effortRate);
             
             const taxes = calculateTaxes();
             document.getElementById('imt-result').textContent = formatCurrency(taxes.imt);
@@ -538,15 +543,18 @@
             });
         }
 
-        function saveLead(email, phone) {
-
-            fetch("https://script.google.com/macros/s/AKfycbzirGJgscRbpXXkgllJPvxVEgnPNLpQ0rReOMq_lCpx1o8ikVOvKHrz7iQ67kshBjCLNQ/exec", {
+        function saveLead(email, phone, propertyValue, downPayment, effortRate) {
+            
+            fetch("https://script.google.com/macros/s/AKfycbxnjuZf4H2ZXFjlG4rSjXBCW8d2lx5cVJSYPwLB4Nf_0823jXzwCvocnotpe1shAA5R0A/exec", {
             
             method: "POST",
             
             body: JSON.stringify({
             email: email,
-            phone: phone
+            phone: phone,
+            property_value: propertyValue,
+            down_payment: downPayment,
+            effort_rate: effortRate
             })
 
             })
