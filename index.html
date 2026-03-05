@@ -435,6 +435,7 @@
 
             const propertyValue = document.getElementById("property-value").value;
             const downPayment = document.getElementById("down-payment").value;
+            const netIncome = document.getElementById("net-income").value;
 
             const taxes = calculateTaxes();
             document.getElementById('imt-result').textContent = formatCurrency(taxes.imt);
@@ -442,7 +443,7 @@
             document.getElementById('total-initial-cost').textContent = formatCurrency(taxes.total);
 
             const effortRate = calculateScenarios();
-            saveLead(email, phone, propertyValue, downPayment, effortRate);
+            saveLead(email, phone, propertyValue, downPayment, netIncome, effortRate);
         }
 
         function calculateScenarios() {
@@ -544,7 +545,7 @@
             });
         }
 
-        function saveLead(email, phone, propertyValue, downPayment, effortRate) {
+        function saveLead(email, phone, propertyValue, downPayment, netIncome, effortRate) {
             
             fetch("https://script.google.com/macros/s/AKfycbxWmQJXfy8gc15hI55y-K-e3E4xY31FN9bTskegmeOvktEvbP4CIHDsvJTA7QiFaeg6WA/exec", {
             
@@ -555,6 +556,7 @@
             phone: phone,
             property_value: parseFloat(propertyValue) || 0,
             down_payment: parseFloat(downPayment) || 0,
+            net_income: parseFloat(netIncome) || 0,
             effort_rate: effortRate
             })
 
